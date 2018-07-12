@@ -1,0 +1,13 @@
+rec Find  [itemId: str, maxPrice:int, reqId:str] extern;
+
+rec FindItem [itemId: str, maxPrice:int, reqId:str ] extern
+
+nodes
+client1::{startL ~ localhost:11004}
+  port 16001
+  begin
+	eval(FindItem("id1",500,"client1"))@startL
+  end
+
+
+endnodes

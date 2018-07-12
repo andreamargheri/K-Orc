@@ -1,0 +1,7 @@
+nodes
+lclient::{}
+ port 14000
+ begin 
+	out("client")@self
+ end
+endnodes

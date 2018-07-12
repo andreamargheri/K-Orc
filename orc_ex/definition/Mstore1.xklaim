@@ -1,0 +1,38 @@
+nodes
+shop11::{succ ~ localhost:11002,finish ~ localhost:11005, s ~ localhost:11004}
+  port 11001
+  begin
+	out("next", succ)@self;
+	out("id1",10,11)@self;
+	out("id2",15,15)@self;
+	out("id3",15,8)@self
+  end;
+
+shop12::{succ ~ localhost:11003,finish ~ localhost:11005, s ~ localhost:11004}
+  port 11002
+  begin
+	out("next", succ)@self;
+	out("id1",6,15)@self;
+	out("id2",15,15)@self;
+	out("id3",13,9)@self;
+	out("id4",16,6)@self
+  end;
+
+shop13::{finish ~ localhost:11005, s ~ localhost:11004}
+  port 11003
+  begin
+	out("next", finish)@self;
+	out("id2",15,10)@self;
+	out("id3",12,8)@self;
+	out("id4",11,6)@self  
+end;
+
+l1::{startS ~ localhost:11001}
+  port 11004
+  begin
+	out("start",startS)@self
+  end
+
+
+endnodes
+

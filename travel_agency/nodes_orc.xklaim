@@ -1,0 +1,57 @@
+#nodi per eseguire programma orc agenzia
+nodes
+
+hotel::{compensator ~ localhost:11004, prenotazione ~ localhost:11003, risposta ~ localhost:11000}
+  port 11001
+  begin
+	out("doppia",2,60)@self;
+	out("singola",2,40)@self
+  end;
+
+volo::{compensator ~ localhost:11004, prenotazione ~ localhost:11003, risposta ~ localhost:11000}
+  port 11002
+  begin
+	out("milano",2,45)@self;
+	out("roma",2,52)@self
+  end;
+
+prenotazione::{risposta ~ localhost:11000}
+  port 11003
+  declare 
+	var count,gcount,numero,id,x,tot,prezzo:int;
+	var stringa:str;
+	var dloc:loc
+  begin
+	gcount:=0;
+	while true do
+		in(!id,!stringa,!numero,!prezzo,!dloc)@self;		
+		out(gcount,id,stringa,numero,prezzo,dloc)@self;		
+		gcount := gcount +1;
+		if inp(id,!tot,!count)@self then
+			out(id,"prenotato",tot+prezzo)@risposta
+		else
+		 	out(id,prezzo,1)@self
+		endif
+	enddo
+  end;
+
+compensator::{volo ~ localhost:11002, hotel ~ localhost:11001, prenotazione ~ localhost:11003,  risposta ~ localhost:11000}
+  port 11004
+  declare
+	var stringa:str;
+	var numero,id,count,gcount,num,prezzo:int;
+	var dloc:loc
+  begin
+	while true do
+		in ("start",!id)@self;
+		forall inp(!gcount,id,!stringa,!numero,!prezzo,!dloc)@prenotazione do
+			in(stringa,!num,!prezzo)@dloc;
+			out(stringa,num+numero,prezzo)@dloc
+		enddo;
+		# si segnala alla agenzia	
+		out(id,"compensazione",0)@risposta
+	enddo	
+  end
+ 
+
+endnodes

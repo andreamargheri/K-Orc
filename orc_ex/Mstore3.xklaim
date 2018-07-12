@@ -1,0 +1,37 @@
+nodes
+shop31::{succ ~ localhost:13002,finish ~ localhost:13005, s ~ localhost:13004}
+  port 13001
+  begin
+	out("next", succ)@self;
+	out("id1",10,12)@self;
+	out("id2",15,18)@self;
+	out("id3",15,15)@self
+  end;
+
+shop32::{succ ~ localhost:13003,finish ~ localhost:13005, s ~ localhost:13004}
+  port 13002
+  begin
+	out("next", succ)@self;
+	out("id1",6,11)@self;
+	out("id2",15,15)@self;
+	out("id3",13,29)@self;
+	out("id4",16,6)@self
+  end;
+
+shop33::{finish ~ localhost:13005, s ~ localhost:13004}
+  port 13003
+  begin
+	out("next", finish)@self;
+	out("id2",15,17)@self;
+	out("id3",12,23)@self;
+	out("id4",11,16)@self  
+end;
+
+l3::{startS ~ localhost:13001}
+  port 13004
+  begin
+	out("start",startS)@self
+  end
+
+endnodes
+

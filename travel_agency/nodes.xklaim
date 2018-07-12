@@ -1,0 +1,72 @@
+#prova nodi solo in xklaim
+rec prenotaHotel  [id:int, camera:str, numero:int] extern;
+
+rec prenotaVolo  [id:int, volo:str, numero:int] extern
+
+nodes
+
+hotel::{compensator ~ localhost:11004, prenotazione ~ localhost:11003}
+  port 11001
+  begin
+	out("doppia",2)@self;
+	out("singola",2)@self
+  end;
+
+volo::{compensator ~ localhost:11004, prenotazione ~ localhost:11003}
+  port 11002
+  begin
+	out("milano",2)@self;
+	out("roma",2)@self
+  end;
+
+prenotazione::{}
+  port 11003
+  declare 
+	var count,gcount,numero,id,x:int;
+	var stringa:str;
+	var dloc:loc
+  begin
+	gcount:=0;
+	while true do
+		in(!id,!stringa,!numero,!dloc)@self;		
+		out(gcount,id,stringa,numero,dloc)@self;		
+		gcount := gcount +1;
+		if inp(id,!count)@self then
+			out("prenotato",id,"volo e hotel prenotati")@self		
+		else
+		 	out(id,1)@self
+		endif
+	enddo
+  end;
+
+compensator::{volo ~ localhost:11002, hotel ~ localhost:11001, prenotazione ~ localhost:11003}
+  port 11004
+  declare
+	var stringa:str;
+	var numero,id,count,gcount,num:int;
+	var dloc:loc
+  begin
+	while true do
+		in ("start",!id)@self;
+		forall inp(!gcount,id,!stringa,!numero,!dloc)@prenotazione do
+			in(stringa,!num)@dloc;
+			out(stringa,num+numero)@dloc
+		enddo;
+		# si segnala alla agenzia	
+		print("compensato"+id)
+	enddo	
+  end;
+
+tryNodes::{volo ~ localhost:11002, hotel ~ localhost:11001, compensator ~ localhost:11004, prenotazione ~ localhost:11003}
+ port 11005
+ begin
+	eval(prenotaHotel(1,"doppia",1))@hotel;
+	eval(prenotaVolo(1,"milano",2))@volo;
+	eval(prenotaHotel(2,"singola",1))@hotel;
+	eval(prenotaVolo(2,"roma",3))@volo;
+	eval(prenotaHotel(3,"doppia",2))@hotel;
+	eval(prenotaVolo(3,"milano",4))@volo
+ end
+
+
+endnodes

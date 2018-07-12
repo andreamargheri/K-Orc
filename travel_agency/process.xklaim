@@ -1,0 +1,41 @@
+rec prenotaHotel  [id:int, camera:str, numero:int]
+  declare
+	locname prenotazione;
+	locname compensator;
+	var posti,prezzo:int
+  begin
+	posti:= -1;
+	prezzo:= -1;
+	inp(camera,!posti,!prezzo)@self;
+	if posti >= numero then
+		out(camera, posti - numero,prezzo)@self;
+		out(id,camera,numero,prezzo*posti,self)@prenotazione
+	else		
+		print("posti non disponibili in hotel");		
+		if posti>=0 then
+			out(camera, posti,prezzo)@self
+		endif; 
+		out("start",id)@compensator
+	endif		
+  end;
+
+rec prenotaVolo  [id:int, volo:str, numero:int]
+  declare
+	locname prenotazione;
+	locname compensator;
+	var posti,prezzo:int
+  begin
+	posti:=-1;
+	prezzo:= -1;
+	inp(volo,!posti,!prezzo)@self;
+	if posti >= numero then
+		out(volo, posti - numero,prezzo)@self;
+		out(id,volo,numero,prezzo*posti,self)@prenotazione
+	else
+		print("posti non disponibili nel volo");
+		if posti>=0 then
+			out(volo, posti,prezzo)@self		
+		endif;
+		out("start",id)@compensator
+	endif		
+  end

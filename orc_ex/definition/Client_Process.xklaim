@@ -1,0 +1,26 @@
+rec Find  [itemId: str, maxPrice:int, reqId:str]
+  declare
+	locname s,finish;
+	var q,p:int;
+	var locnext: phyloc
+  begin
+	p := 0;
+	q := 0;
+	read(itemId,!q,!p)@self within 200;
+	if (p <= maxPrice AND p > 0) then
+		out(itemId,q,p,reqId)@s
+	endif;
+	read("next",!locnext)@self;
+	if (locnext != *(finish)) then
+		eval(Find(itemId,maxPrice,reqId))@locnext
+	endif;
+	out("end search")@self
+  end;
+
+rec FindItem [itemId: str, maxPrice:int, reqId:str ]
+  declare
+	var locstart: loc
+  begin
+	read("start",!locstart)@self;
+	eval(Find(itemId,maxPrice,reqId))@locstart
+  end
